@@ -18,7 +18,7 @@ def _is_numeric(x):
 @click.command(short_help="Geocode an address.")
 @click.option('--access-token', help="Your access token")
 @click.option('--forward', default=False, help="Perform a forward geocode")
-@click.option('--reverse', default=False, help="Perform a reverse geocode")
+@click.option('--reverse', default=False, nargs=2, type=float, help="Perform a reverse geocode")
 @click.pass_context
 def geocode(ctx, access_token, forward, reverse):
     """Geocode an address"""
@@ -35,10 +35,9 @@ def geocode(ctx, access_token, forward, reverse):
     if forward:
         resp = geocoder.forward(forward)
     elif reverse:
-        coords = filter(lambda x: _is_numeric(x), [ x.strip() for x in reverse.split(',') ])
-        if len(coords) != 2:
+        if len(reverse) != 2:
             raise MapboxException('Reverse geocoding requires a query in decimal longitude,latitude format, e.g. --reverse="-100,37.7"')
-        resp = geocoder.reverse(coords[0], coords[1])
+        resp = geocoder.reverse(str(reverse[0]), str(reverse[1]))
 
     if resp.status_code == 200:
         click.echo(resp.text)
