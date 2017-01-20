@@ -285,7 +285,7 @@ def test_upload(monkeypatch):
         print("{0} bytes uploaded".format(num_bytes))
 
     with open('tests/moors.json', 'r') as src:
-        res = mapbox.Uploader(access_token=access_token).upload(src, 'test1', callback=print_cb)
+        res = mapbox.Uploader(access_token=access_token).upload('test1', src, callback=print_cb)
 
     assert res.status_code == 201
     job = res.json()
@@ -322,7 +322,7 @@ def test_upload_error(monkeypatch):
         content_type='application/json')
 
     with open('tests/moors.json', 'r') as src:
-        res = mapbox.Uploader(access_token=access_token).upload(src, 'test1')
+        res = mapbox.Uploader(access_token=access_token).upload('test1', src)
 
     assert res.status_code == 409
 
@@ -331,7 +331,7 @@ def test_invalid_fileobj():
     """Must be file object, not path"""
     with pytest.raises(mapbox.errors.InvalidFileError):
         mapbox.Uploader(access_token=access_token).upload(
-            'tests/moors.json', 'test1')
+            'test1', 'tests/moors.json')
 
 
 @responses.activate
@@ -371,7 +371,7 @@ def test_upload_patch(monkeypatch):
 
     with open('tests/moors.json', 'r') as src:
         res = mapbox.Uploader(access_token=access_token).upload(
-            src, 'testuser.test1', name='test1', patch=True)
+            'testuser.test1', src, name='test1', patch=True)
 
     assert res.status_code == 201
     job = res.json()

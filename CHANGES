@@ -2,6 +2,8 @@ Next
 ----
 - Require boto3>=1.4 to get `upload_fileobj()`.
 - Add a callback function for AWS SDK uploads to `uploads.stage()` (#147).
+- Breaking change: the tileset positional argument is moved to first in
+  `Uploader.upload()` and `Uploader.create()` (#149).
 
 0.10.1 (2016-11-22)
 -------------------
