@@ -1,4 +1,5 @@
 import pytest
+import responses
 
 import mapbox
 from mapbox import errors
@@ -44,3 +45,15 @@ def test_username_valid():
 	"""Providing valid username"""
 	user = 'abc'
 	assert user == mapbox.Analytics(access_token='pk.test')._validate_username(user)
+
+@responses.activate
+def test_analytics():
+    responses.add(
+        responses.GET,
+        'https://api.mapbox.com/analytics/v1/accounts/sanjayb?access_token=pk.test&period=2016-03-22T00%3A00%3A00.000Z%2C2016-03-24T00%3A00%3A00.000Z',
+        match_querystring=True,
+        body='',
+        status=200)
+
+    res = mapbox.Analytics(access_token='pk.test').analytics('accounts', 'sanjayb', None, '2016-03-22T00:00:00.000Z', '2016-03-24T00:00:00.000Z')
+    assert res.status_code == 200
