@@ -15,15 +15,13 @@ def test_profile_valid(resource_type):
     assert resource_type == mapbox.Analytics(
         access_token='pk.test')._validate_resource_type(resource_type)
 
-def test_period_invalid():
-	with pytest.raises(errors.InvalidPeriodError):
-		mapbox.Analytics(access_token='pk.test')._validate_period('2016-03-22T00:00:00.000Z', None)
-
-	with pytest.raises(errors.InvalidPeriodError):
-		mapbox.Analytics(access_token='pk.test')._validate_period('2016-03-22T00:00:00.000Z', '2016-03-20T00:00:00.000Z')
-
-	with pytest.raises(errors.InvalidPeriodError):
-		mapbox.Analytics(access_token='pk.test')._validate_period('2016-03-22T00:00:00.000Z', '2017-04-20T00:00:00.000Z')
+@pytest.mark.parametrize(
+    'start,end', [('2016-03-22T00:00:00.000Z', None),
+                  ('2016-03-22T00:00:00.000Z', '2016-03-20T00:00:00.000Z'),
+                  ('2016-03-22T00:00:00.000Z', '2017-04-20T00:00:00.000Z')])
+def test_period_invalid(start, end):
+    with pytest.raises(errors.InvalidPeriodError):
+        mapbox.Analytics(access_token='pk.test')._validate_period(start, end)
 
 def test_period_valid():
 	start = '2016-03-22T00:00:00.000Z'
@@ -52,7 +50,7 @@ def test_analytics():
         responses.GET,
         'https://api.mapbox.com/analytics/v1/accounts/sanjayb?access_token=pk.test&period=2016-03-22T00%3A00%3A00.000Z%2C2016-03-24T00%3A00%3A00.000Z',
         match_querystring=True,
-        body='',
+        body='{"key": "value"}',
         status=200)
 
     res = mapbox.Analytics(access_token='pk.test').analytics('accounts', 'sanjayb', None, '2016-03-22T00:00:00.000Z', '2016-03-24T00:00:00.000Z')
